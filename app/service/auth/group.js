@@ -6,22 +6,34 @@ module.exports = app => {
     async index(pageNumber = 1, pageSize = 20, query) {
       pageNumber = Number(pageNumber);
       pageSize = Number(pageSize);
+      return { resultList: await this.ctx.model.User.findAndCountAll({
+        offset: (pageNumber - 1) * pageSize,
+        limit: pageSize,
+      }) };
+      // return this.ctx.response.format.paging({
+      //   resultList: await this.ctx.model.User.findAndCountAll({
+      //     offset: (pageNumber - 1) * pageSize,
+      //     limit: pageSize,
+      //   }),
+      //   totalLength: await this.ctx.model.User.find(query).count(),
+      //   pageSize,
+      //   currentPage: Number(pageNumber),
+      // });
+      // return this.ctx.response.format.paging({
+      //   resultList: await this.ctx.model.Role.find(query)
+      //     .skip((pageNumber - 1) * pageSize)
+      //     .limit(pageSize)
+      //     .exec(),
 
-      return this.ctx.response.format.paging({
-        resultList: await this.ctx.model.AuthGroup.find(query)
-          .skip((pageNumber - 1) * pageSize)
-          .limit(pageSize)
-          .exec(),
-
-        totalLength: await this.ctx.model.AuthGroup.find(query).count(),
-        pageSize,
-        currentPage: Number(pageNumber),
-      });
+      //   totalLength: await this.ctx.model.Role.find(query).count(),
+      //   pageSize,
+      //   currentPage: Number(pageNumber),
+      // });
     }
 
     async create(data) {
 
-      const result = await this.ctx.model.AuthGroup.create(data);
+      const result = await this.ctx.model.Role.create(data);
 
       return result;
     }
@@ -40,26 +52,26 @@ module.exports = app => {
       //   throw err;
       // }
 
-      const result = await this.ctx.model.AuthGroup.remove({
-        _id: id,
+      const result = await this.ctx.model.Role.remove({
+        id,
       });
 
       return result.result.n !== 0 && result;
     }
 
     async edit(id) {
-      const result = await this.ctx.model.AuthGroup.findOne({
-        _id: id,
+      const result = await this.ctx.model.Role.findOne({
+        id,
       });
 
       return result;
     }
 
     async update(id, data) {
-      const newData = Object.assign(data, { _id: id });
+      const newData = Object.assign(data, { id });
 
       try {
-        return await this.ctx.model.AuthGroup.findByIdAndUpdate(id, newData, {
+        return await this.ctx.model.Role.findByIdAndUpdate(id, newData, {
           new: true,
           runValidators: true,
         }).exec();

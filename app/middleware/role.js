@@ -36,28 +36,39 @@ module.exports = action => {
       return false;
     }
 
-    const groupsList = await ctx.model.AuthGroup.find({
-      users: userInfo.id,
+
+    const roleList = await ctx.model.UserRole.findAll({
+      where: {
+        user_id: userInfo.id,
+      },
     });
 
-    if (groupsList === null || !groupsList.length) {
+    if (roleList === null || !roleList.length) {
       noAccess();
     }
 
-    for (let i = 0, l = groupsList.length; i < l; i++) {
-      const uriId = (await ctx.model.AuthModule.findOne({
+    const module = await ctx.model.Module.findOne({
+      where: {
         uri: action,
-      })).id;
+      },
+    });
 
-      const result = await ctx.model.AuthGroup.findOne({
-        _id: groupsList[i],
-        modules: uriId,
-      });
-      if (result) {
-        await next();
+    for (let i = 0, l = roleList.length; i < l; i++) {
 
-        return true;
+      if (module) {
+        const result = await ctx.model.RoleModule.findOne({
+          where: {
+            role_id: roleList[i].role_id,
+            module_id: module.id,
+          },
+        });
+        if (result) {
+          await next();
+
+          return true;
+        }
       }
+
     }
     noAccess();
   };

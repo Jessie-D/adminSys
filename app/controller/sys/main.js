@@ -23,7 +23,7 @@ class sysMainController extends Controller {
 
     // // 使用 mysql.escape 方法,做复杂的表关联查询
     // const result = await ctx.app.mysql.get('back').query('select distinct bm.* from role_module rm left join module bm on rm.id=bm.id left join user_role ur on rm.role_id=ur.role_id WHERE ur.user_id=? AND bm.show=1', [ ctx.user.id ]);
-    let userGroupData = await ctx.model.AuthGroup.find({
+    let userGroupData = await ctx.model.Group.find({
       users: ctx.user.id,
     }, {
       modules: 1,
@@ -35,7 +35,7 @@ class sysMainController extends Controller {
 
     _.union(...userGroupData) // 去重
       .forEach(item => {
-        userAuthModulePromise.push(ctx.model.AuthModule.findOne({
+        userAuthModulePromise.push(ctx.model.Module.findOne({
           _id: item,
           // isMenu: true,
         }));
@@ -51,7 +51,7 @@ class sysMainController extends Controller {
       if (!obj.isMenu) {
         const parentUriList = uriToList(obj.uri);
         parentUriList.pop();
-        parentNodePromise.push(ctx.model.AuthModule.find({
+        parentNodePromise.push(ctx.model.Module.find({
           uri: { $in: parentUriList },
         }));
       }
@@ -115,7 +115,7 @@ class sysMainController extends Controller {
           icon: obj.iconfont,
           name: obj.name,
           path: obj.url || '',
-          isLeafNode: obj.isLeafNode||false,
+          isLeafNode: obj.isLeafNode || false,
           describe: obj.describe,
           children: obj.children && convert(obj.children),
         });

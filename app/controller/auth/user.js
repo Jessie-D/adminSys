@@ -3,7 +3,7 @@ const _ = require('underscore');
 
 const Controller = require('./../../core/baseController');
 
-class authUserController extends Controller {
+class UserController extends Controller {
   async index(ctx) {
     const query = ctx.request.query;
 
@@ -59,22 +59,22 @@ class authUserController extends Controller {
       return;
     }
 
-    const isAccountExist = await this.ctx.model.AuthUser.findOne({
-      account: query.account,
-    });
+    // const isAccountExist = await this.ctx.model.User.findOne({
+    //   account: query.account,
+    // });
 
-    if (isAccountExist) {
-      this.failure({
-        code: '-1',
-        msg: '用户名已存在',
-        data: {
-          account: query.account,
-        },
-        state: 422,
-      });
+    // if (isAccountExist) {
+    //   this.failure({
+    //     code: '-1',
+    //     msg: '用户名已存在',
+    //     data: {
+    //       account: query.account,
+    //     },
+    //     state: 422,
+    //   });
 
-      return false;
-    }
+    //   return false;
+    // }
 
     const result = await ctx.service.auth.user.create(_.pick(query, ...Object.keys(createRule)));
 
@@ -226,7 +226,7 @@ class authUserController extends Controller {
       return false;
     }
 
-    const result = (await ctx.model.AuthUser.findOne({
+    const result = (await ctx.model.User.findOne({
       _id: ctx.user.id,
     }, {
       _id: 0,
@@ -242,4 +242,4 @@ class authUserController extends Controller {
     });
   }
 }
-module.exports = authUserController;
+module.exports = UserController;

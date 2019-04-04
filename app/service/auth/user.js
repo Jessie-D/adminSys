@@ -6,21 +6,23 @@ module.exports = app => {
   class userService extends app.Service {
 
     async index(pageNumber = 1, pageSize = 20, query) {
-
+      pageNumber = Number(pageNumber);
+      pageSize = Number(pageSize);
+      const data = await this.ctx.model.User.findAndCountAll({
+        where: query, // WHERE 条件
+        offset: (pageNumber - 1) * pageSize,
+        limit: pageSize,
+      });
       return this.ctx.response.format.paging({
-        resultList: await this.ctx.model.AuthUser.find(query)
-          .skip((pageNumber - 1) * pageSize)
-          .limit(Number(pageSize))
-          .exec(),
-
-        totalLength: await this.ctx.model.AuthUser.find(query).count(),
+        resultList: data.rows,
+        totalLength: data.count,
         pageSize,
         currentPage: Number(pageNumber),
       });
     }
 
     async create(data) {
-      const result = await this.ctx.model.AuthUser.create(Object.assign(data, {
+      const result = await this.app.model.User.create(Object.assign(data, {
         password: crypto.createHash('md5').update(data.password).digest('hex'),
       }));
 
@@ -28,12 +30,12 @@ module.exports = app => {
     }
 
     async destroy(id) {
-      const result = await this.ctx.model.AuthUser.remove({
-        _id: id,
+      const result = await this.app.model.User.remove({
+        id,
       });
 
       // 删除用户组集合中与此用户相关的数据
-      this.ctx.model.AuthGroup.update({},
+      this.ctx.model.Group.update({},
         {
           $pull: { users: id },
         }
@@ -44,15 +46,15 @@ module.exports = app => {
     }
 
     async edit(id) {
-      const result = await this.ctx.model.AuthUser.findOne({
-        _id: id,
+      const result = await this.app.model.User.findOne({
+        id,
       });
 
       return result;
     }
 
     async update(id, data) {
-      let newData = Object.assign(data, { _id: id });
+      let newData = Object.assign(data, { id });
 
       if (data.password) {
         newData = Object.assign(newData, {
@@ -61,7 +63,7 @@ module.exports = app => {
       }
 
       try {
-        return await this.ctx.model.AuthUser.findByIdAndUpdate(id, newData, {
+        return await this.app.model.User.findByIdAndUpdate(id, newData, {
           new: true,
           runValidators: true,
         }).exec();

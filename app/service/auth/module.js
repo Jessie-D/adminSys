@@ -5,32 +5,34 @@ module.exports = app => {
   class moduleService extends app.Service {
 
     async index(pageNumber = 1, pageSize = 20, query) {
-
+      pageNumber = Number(pageNumber);
+      pageSize = Number(pageSize);
+      const data = await this.ctx.model.Module.findAndCountAll({
+        where: query, // WHERE 条件
+        offset: (pageNumber - 1) * pageSize,
+        limit: pageSize,
+      });
       return this.ctx.response.format.paging({
-        resultList: await this.ctx.model.AuthModule.find(query)
-          .skip((pageNumber - 1) * pageSize)
-          .limit(pageSize)
-          .exec(),
-
-        totalLength: await this.ctx.model.AuthModule.find(query).count(),
+        resultList: data.rows,
+        totalLength: data.count,
         pageSize,
         currentPage: Number(pageNumber),
       });
     }
 
     async create(data) {
-      const result = this.ctx.model.AuthModule.create(data);
+      const result = this.ctx.model.Module.create(data);
 
       return result;
     }
 
     async destroy(id) {
-      const result = await this.ctx.model.AuthModule.remove({
-        _id: id,
+      const result = await this.ctx.model.Module.remove({
+        id,
       });
 
       // 删除用户组集合中与此模块相关的数据
-      this.ctx.model.AuthGroup.update({},
+      this.ctx.model.Group.update({},
         {
           $pull: { modules: id },
         }
@@ -40,8 +42,8 @@ module.exports = app => {
     }
 
     async edit(id) {
-      const result = await this.ctx.model.AuthModule.findOne({
-        _id: id,
+      const result = await this.ctx.model.Module.findOne({
+        id,
       });
       return result;
     }
@@ -49,7 +51,7 @@ module.exports = app => {
     async update(id, data) {
 
       try {
-        return await this.ctx.model.AuthModule.findByIdAndUpdate(id, {
+        return await this.ctx.model.Module.findByIdAndUpdate(id, {
           ...data,
           parent_id: data.parent_id || '',
         }, {
@@ -69,13 +71,13 @@ module.exports = app => {
       let originalObj = null;
 
       if (isAll) {
-        originalObj = await this.ctx.model.AuthModule.find({}, {
+        originalObj = await this.ctx.model.Module.find({}, {
           name: 1,
           sort: 1,
           parent_id: 1,
         });
       } else {
-        originalObj = await this.ctx.model.AuthModule.find();
+        originalObj = await this.ctx.model.Module.find();
       }
 
       // this.ctx.logger.debug(originalObj);

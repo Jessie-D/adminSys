@@ -3,12 +3,6 @@
 // 本地静态资源(其实不需要配置，默认值就是true)
 exports.static = true;
 
-// mysql操作
-// exports.mysql = {
-//   enable: true,
-//   package: 'egg-mysql',
-// };
-
 // 模版引擎
 exports.nunjucks = {
   enable: true,
@@ -26,9 +20,14 @@ exports.passport = {
   package: 'egg-passport',
 };
 
-exports.mongoose = {
+exports.mysql = {
   enable: true,
-  package: 'egg-mongoose',
+  package: 'egg-mysql',
+};
+
+exports.sequelize = {
+  enable: true,
+  package: 'egg-sequelize',
 };
 
 // alinode性能监控

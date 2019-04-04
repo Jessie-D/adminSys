@@ -11,14 +11,26 @@ module.exports = appInfo => {
     logger: {
       consoleLevel: 'DEBUG',
     },
-    mongoose: {
-      clients: {
-        back: {
-          url: process.env.EGG_MONGODB_URL || 'mongodb://127.0.0.1:27017/eas',
-          options: {},
-        },
-      },
+    sequelize: {
+      dialect: 'mysql',
+      host: 'localhost',
+      port: 3306,
+      password: 'dwj123456',
+      database: 'egg',
     },
+    // mysql: {
+    //   client: {
+    //     host: 'localhost',
+    //     // 端口号
+    //     port: '3306',
+    //     // 用户名
+    //     user: 'root',
+    //     // 密码
+    //     password: 'dwj123456',
+    //     // 数据库名
+    //     database: 'egg',
+    //   },
+    // },
     view: {
       defaultViewEngine: 'nunjucks',
       // root: path.join(appInfo.baseDir, 'app/assets'),

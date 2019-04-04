@@ -1,6 +1,6 @@
 'use strict';
 const _ = require('underscore');
-const Controller = require('./../../core/baseController');
+const Controller = require('../../core/baseController');
 
 class authGroupController extends Controller {
   async index(ctx) {
@@ -46,7 +46,7 @@ class authGroupController extends Controller {
       return;
     }
 
-    const isExist = await this.ctx.model.AuthGroup.findOne({
+    const isExist = await this.ctx.model.Group.findOne({
       name: query.name,
     });
 
@@ -105,7 +105,7 @@ class authGroupController extends Controller {
     const id = ctx.params.id;
     const query = ctx.request.body;
 
-    const isExist = await this.ctx.model.AuthGroup.findOne({
+    const isExist = await this.ctx.model.Group.findOne({
       _id: {
         $ne: id,
       },
@@ -141,11 +141,11 @@ class authGroupController extends Controller {
   async getUser(ctx) {
     const query = ctx.params;
 
-    const addArr = (await ctx.model.AuthGroup.findOne({
+    const addArr = (await ctx.model.Group.findOne({
       _id: query.id,
     })).users;
 
-    const allResult = await ctx.model.AuthUser.find();
+    const allResult = await ctx.model.User.find();
 
     const allArr = [];
     allResult.forEach(obj => {
@@ -165,7 +165,7 @@ class authGroupController extends Controller {
     const roleId = ctx.params.id;
     const idList = ctx.request.body.idList;
 
-    const result = await ctx.model.AuthGroup.findByIdAndUpdate(roleId, {
+    const result = await ctx.model.Group.findByIdAndUpdate(roleId, {
       $set: {
         users: idList,
       },
@@ -188,7 +188,7 @@ class authGroupController extends Controller {
   async getModule(ctx) {
     const query = ctx.params;
 
-    const addArr = (await ctx.model.AuthGroup.findOne({
+    const addArr = (await ctx.model.Group.findOne({
       _id: query.id,
     })).modules;
 
@@ -207,7 +207,7 @@ class authGroupController extends Controller {
     const idList = ctx.request.body.idList;
 
     // 给用户组集合插入user信息
-    const result = await ctx.model.AuthGroup.findByIdAndUpdate(roleId, {
+    const result = await ctx.model.Group.findByIdAndUpdate(roleId, {
       $set: {
         modules: idList,
       },

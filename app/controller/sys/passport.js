@@ -13,9 +13,11 @@ class sysPassportController extends Controller {
 
   async login(ctx) {
 
-    const userInfo = await ctx.model.AuthUser.findOne({
-      account: ctx.query.username,
-      password: crypto.createHash('md5').update(ctx.query.password).digest('hex'),
+    const userInfo = await ctx.model.User.findOne({
+      where: {
+        account: ctx.query.username,
+        password: crypto.createHash('md5').update(ctx.query.password).digest('hex'),
+      },
     });
 
     if (userInfo) {
@@ -24,20 +26,18 @@ class sysPassportController extends Controller {
         password: ctx.query.password,
       });
 
-      const groupNameList = await ctx.model.AuthGroup.find({
-        users: userInfo.id,
-      }, {
-        name: 1,
+      const roleList = await ctx.model.UserRole.findAll({
+        where: {
+          user_id: userInfo.id,
+        },
       });
 
       this.success({
-        id: userInfo._id,
+        id: userInfo.id,
         userName: userInfo.name,
-        groupList: groupNameList.map(item => item.name),
+        groupList: roleList.map(item => item.role_id),
       });
     } else {
-
-
       this.failure({
         code: '1',
         data: {},

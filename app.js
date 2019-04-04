@@ -14,9 +14,11 @@ module.exports = app => {
   });
 
   app.passport.deserializeUser(async (ctx, user) => {
-    const userInfo = await ctx.model.AuthUser.findOne({
-      account: user.username,
-      password: user.password,
+    const userInfo = await ctx.model.User.findOne({
+      where: {
+        account: user.username,
+        password: user.password,
+      },
     });
 
     // ctx.logger.debug('passport:deserializeUser',userInfo);

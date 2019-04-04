@@ -11,7 +11,7 @@ class authMenuController extends Controller {
       return value !== '' && value !== undefined;
     });
 
-    const result = await ctx.service.auth.module.index(Number(query.currentPage), Number(query.pageSize), where);
+    const result = await ctx.service.auth.module.index(query.currentPage, query.pageSize, where);
 
     ctx.body = {
       code: '0',
@@ -43,7 +43,12 @@ class authMenuController extends Controller {
         allowEmpty: true,
       },
       isMenu: {
-        type: 'boolean',
+        type: 'number',
+        required: false,
+        allowEmpty: true,
+      },
+      isLeafNode: {
+        type: 'number',
         required: false,
         allowEmpty: true,
       },
@@ -85,7 +90,7 @@ class authMenuController extends Controller {
 
 
     if (query.uri) {
-      const isExist = await this.ctx.model.AuthModule.findOne({
+      const isExist = await this.ctx.model.Module.findOne({
         uri: query.uri,
       });
 
@@ -115,7 +120,7 @@ class authMenuController extends Controller {
   async destroy(ctx) {
     const query = ctx.params;
 
-    const isExist = await this.ctx.model.AuthModule.findOne({
+    const isExist = await this.ctx.model.Module.findOne({
       _id: query.id,
     });
     if (!isExist) {
@@ -212,7 +217,7 @@ class authMenuController extends Controller {
       return;
     }
 
-    const isUriExist = await this.ctx.model.AuthModule.findOne({
+    const isUriExist = await this.ctx.model.Module.findOne({
       _id: {
         $ne: id,
       },

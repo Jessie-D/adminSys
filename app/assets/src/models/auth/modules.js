@@ -41,7 +41,7 @@ export default {
         payload: {
           data: {
             query: payload,
-            list: response.result.list,//.map(obj => Object.assign(obj, { key: obj.id })),
+            list: response.result.list,
             pagination: {
               currentPage: response.result.currentPage,
               pageSize: response.result.pages,

@@ -5,10 +5,10 @@ const Controller = require('./../../core/baseController');
 
 class sysEditProfileController extends Controller {
 
-  * edit(ctx) {
+  * detail(ctx) {
     const query = ctx.params;
 
-    const result = yield ctx.service.auth.user.edit(query.id);
+    const result = yield ctx.service.auth.user.detail(query.id);
 
     if (!result) {
       this.failure({

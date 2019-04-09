@@ -106,10 +106,10 @@ class UserController extends Controller {
     this.success();
   }
 
-  async edit(ctx) {
+  async detail(ctx) {
     const query = ctx.params;
 
-    const result = await ctx.service.auth.user.edit(query.id);
+    const result = await ctx.service.auth.user.detail(query.id);
 
     if (!result) {
       this.failure({

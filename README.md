@@ -23,9 +23,8 @@ Eas后台使用egg当作后台框架，`antd`当作前端界面。
 该工程使用的数据库是mongodb，请先运行mongodb。
 
 #### 执行脚本
-1. 进入工程目录下`/init.d/mongo`文件夹
-3. 终端执行`mongo --quiet localhost:27017/eas init.js`
-4. 查看mongodb是否生成了数据
+1. 进入工程目录下`mysql`文件夹 ,执行sql 语句，建库
+2. 查看mysql是否生成了数据
 
 ### 启动node服务
 1. 进入工程目录

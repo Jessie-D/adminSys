@@ -21,29 +21,41 @@ module.exports = app => {
     }
 
     async create(data) {
+      data = { ...data, isMenu: data.isMenu ? 1 : 0, isLeafNode: data.isLeafNode ? 1 : 0 };
       const result = this.ctx.model.Module.create(data);
 
       return result;
     }
 
     async destroy(id) {
-      const result = await this.ctx.model.Module.remove({
-        id,
-      });
-
-      // 删除用户组集合中与此模块相关的数据
-      this.ctx.model.Group.update({},
-        {
-          $pull: { modules: id },
+      let transaction;
+      try {
+        transaction = await this.ctx.model.transaction();
+        const module = await this.ctx.model.Module.findById(id);
+        if (!module) {
+          this.ctx.throw(404, 'module not found');
         }
-      );
+        module.destroy();
+        // 删除用户组集合中与此模块相关的数据
+        await this.ctx.model.RoleModule.destroy({
+          where: {
+            module_id: id,
+          },
+        });
+        await transaction.commit();
+        return;
+      } catch (err) {
+        await transaction.rollback();
+        this.ctx.logger.error(err.message);
+        return '';
+      }
 
-      return result.result.n !== 0 && result;
     }
 
-    async edit(id) {
+    async detail(id) {
       const result = await this.ctx.model.Module.findOne({
-        id,
+        where: { id },
+        attributes: [ 'id', 'name', 'url', 'uri', 'iconfont', 'describe', 'sort', 'isMenu', 'isLeafNode', 'url', 'parent_id' ],
       });
       return result;
     }
@@ -51,13 +63,14 @@ module.exports = app => {
     async update(id, data) {
 
       try {
-        return await this.ctx.model.Module.findByIdAndUpdate(id, {
+        const module = await this.ctx.model.Module.findById(id);
+        if (!module) {
+          this.ctx.throw(404, 'module not found');
+        }
+        return module.update({
           ...data,
           parent_id: data.parent_id || '',
-        }, {
-          new: true,
-          runValidators: true,
-        }).exec();
+        });
       } catch (err) {
         this.ctx.logger.error(err.message);
         return '';
@@ -70,15 +83,13 @@ module.exports = app => {
 
       let originalObj = null;
 
-      if (isAll) {
-        originalObj = await this.ctx.model.Module.find({}, {
-          name: 1,
-          sort: 1,
-          parent_id: 1,
-        });
-      } else {
-        originalObj = await this.ctx.model.Module.find();
-      }
+      // if (isAll) {
+      //   originalObj = await this.ctx.model.Module.findAll({
+      //     attributes: [ 'name', 'sort', 'parent_id' ],
+      //   });
+      // } else {
+      originalObj = await this.ctx.model.Module.findAll();
+      // }
 
       // this.ctx.logger.debug(originalObj);
 
@@ -87,10 +98,10 @@ module.exports = app => {
 
         // 查询该id下的所有子集
         originalObj.forEach(function(obj) {
-          if ((obj.parent_id ? obj.parent_id.toString() : obj.parent_id) === parentId) {
+          if ((obj.parent_id ? obj.parent_id : obj.parent_id) === String(parentId)) {
             arr.push(Object.assign(obj.toJSON(), {
               id: obj.id,
-              children: subset(obj.id.toString()),
+              children: subset(obj.id),
             }));
           }
         });

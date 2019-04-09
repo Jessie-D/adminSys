@@ -89,7 +89,7 @@ const EditModal = connect(state => ({
           } else {
             onOk({
               ...fieldsValue,
-              parent_id: moduleParent.id,
+              parent_id: String(moduleParent.id),
             }, form.resetFields);
           }
         });

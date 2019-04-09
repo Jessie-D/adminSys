@@ -23,7 +23,7 @@ export async function resetPwd(params) {
 
 // 获取用户信息
 export async function getUserInfo({ id }) {
-  return request(`/nodeApi/auth/users/${id}/edit`);
+  return request(`/nodeApi/auth/users/${id}/detail`);
 }
 
 // 编辑用户信息

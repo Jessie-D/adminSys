@@ -14,7 +14,7 @@ export async function info(params) {
 }
 
 export async function getProfile(params) {
-  return request(`/nodeApi/sys/editProfile/${params.id}/edit?${stringify(params)}`);
+  return request(`/nodeApi/sys/editProfile/${params.id}/detail?${stringify(params)}`);
 }
 
 export async function setProfile(params) {

@@ -6,29 +6,17 @@ module.exports = app => {
     async index(pageNumber = 1, pageSize = 20, query) {
       pageNumber = Number(pageNumber);
       pageSize = Number(pageSize);
-      return { resultList: await this.ctx.model.User.findAndCountAll({
+      const data = await this.ctx.model.Role.findAndCountAll({
+        where: query, // WHERE 条件
         offset: (pageNumber - 1) * pageSize,
         limit: pageSize,
-      }) };
-      // return this.ctx.response.format.paging({
-      //   resultList: await this.ctx.model.User.findAndCountAll({
-      //     offset: (pageNumber - 1) * pageSize,
-      //     limit: pageSize,
-      //   }),
-      //   totalLength: await this.ctx.model.User.find(query).count(),
-      //   pageSize,
-      //   currentPage: Number(pageNumber),
-      // });
-      // return this.ctx.response.format.paging({
-      //   resultList: await this.ctx.model.Role.find(query)
-      //     .skip((pageNumber - 1) * pageSize)
-      //     .limit(pageSize)
-      //     .exec(),
-
-      //   totalLength: await this.ctx.model.Role.find(query).count(),
-      //   pageSize,
-      //   currentPage: Number(pageNumber),
-      // });
+      });
+      return this.ctx.response.format.paging({
+        resultList: data.rows,
+        totalLength: data.count,
+        pageSize,
+        currentPage: Number(pageNumber),
+      });
     }
 
     async create(data) {
@@ -39,29 +27,39 @@ module.exports = app => {
     }
 
     async destroy(id) {
-      // const conn = await app.mysql.get('back').beginTransaction(); // 初始化事务
-      // try {
-      //   await this.app.mysql.get('back').delete('role', { id });
-      //   await this.app.mysql.get('back').delete('module', { id });
-      //   await this.app.mysql.get('back').delete('user_role', { id });
+      let transaction;
+      try {
+        transaction = await this.ctx.model.transaction();
+        const role = await this.ctx.model.Role.findById(id);
+        if (!module) {
+          this.ctx.throw(404, 'role not found');
+        }
+        role.destroy();
+        // 删除角色模块集合中与此角色相关的数据
+        await this.ctx.model.RoleModule.destroy({
+          where: {
+            role_id: id,
+          },
+        });
+        // 删除用户角色组集合中与此角色相关的数据
+        await this.ctx.model.UserRole.destroy({
+          where: {
+            role_id: id,
+          },
+        });
+        await transaction.commit();
+        return;
+      } catch (err) {
+        await transaction.rollback();
+        this.ctx.logger.error(err.message);
+        return '';
+      }
 
-      //   await conn.commit(); // 提交事务
-      // } catch (err) {
-      //   // error, rollback
-      //   await conn.rollback(); // 一定记得捕获异常后回滚事务！！
-      //   throw err;
-      // }
-
-      const result = await this.ctx.model.Role.remove({
-        id,
-      });
-
-      return result.result.n !== 0 && result;
     }
 
-    async edit(id) {
+    async detail(id) {
       const result = await this.ctx.model.Role.findOne({
-        id,
+        where: { id },
       });
 
       return result;
@@ -71,10 +69,9 @@ module.exports = app => {
       const newData = Object.assign(data, { id });
 
       try {
-        return await this.ctx.model.Role.findByIdAndUpdate(id, newData, {
-          new: true,
-          runValidators: true,
-        }).exec();
+        return await this.ctx.model.Role.update(newData, {
+          where: { id },
+        });
       } catch (err) {
         this.ctx.logger.error(err.message);
         return '';

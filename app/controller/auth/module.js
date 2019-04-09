@@ -43,12 +43,12 @@ class authMenuController extends Controller {
         allowEmpty: true,
       },
       isMenu: {
-        type: 'number',
+        type: 'boolean',
         required: false,
         allowEmpty: true,
       },
       isLeafNode: {
-        type: 'number',
+        type: 'boolean',
         required: false,
         allowEmpty: true,
       },
@@ -91,7 +91,9 @@ class authMenuController extends Controller {
 
     if (query.uri) {
       const isExist = await this.ctx.model.Module.findOne({
-        uri: query.uri,
+        where: {
+          uri: query.uri,
+        },
       });
 
       if (isExist) {
@@ -121,7 +123,9 @@ class authMenuController extends Controller {
     const query = ctx.params;
 
     const isExist = await this.ctx.model.Module.findOne({
-      _id: query.id,
+      where: {
+        id: query.id,
+      },
     });
     if (!isExist) {
 
@@ -143,12 +147,12 @@ class authMenuController extends Controller {
     });
   }
 
-  async edit(ctx) {
+  async detail(ctx) {
     const query = ctx.params;
 
-    const result = await ctx.service.auth.module.edit(query.id);
+    const result = (await ctx.service.auth.module.detail(query.id)).toJSON();
 
-    this.success(_.pick(result, ...[ 'id', 'name', 'url', 'uri', 'iconfont', 'describe', 'sort', 'show', 'isMenu', 'isLeafNode', 'url', 'parent_id' ]));
+    this.success({ ...result, isMenu: Boolean(result.isMenu), isLeafNode: Boolean(result.isLeafNode) });
   }
 
   async update(ctx) {
@@ -195,11 +199,6 @@ class authMenuController extends Controller {
         required: false,
         allowEmpty: true,
       },
-      show: {
-        type: 'number',
-        required: false,
-        allowEmpty: true,
-      },
       parent_id: {
         type: 'string',
         required: false,
@@ -218,10 +217,12 @@ class authMenuController extends Controller {
     }
 
     const isUriExist = await this.ctx.model.Module.findOne({
-      _id: {
-        $ne: id,
+      where: {
+        id: {
+          $not: id,
+        },
+        uri: query.uri,
       },
-      uri: query.uri,
     });
     if (isUriExist) {
 

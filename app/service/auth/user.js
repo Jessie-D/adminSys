@@ -30,24 +30,33 @@ module.exports = app => {
     }
 
     async destroy(id) {
-      const result = await this.app.model.User.remove({
-        id,
-      });
-
-      // 删除用户组集合中与此用户相关的数据
-      this.ctx.model.Group.update({},
-        {
-          $pull: { users: id },
+      let transaction;
+      try {
+        transaction = await this.ctx.model.transaction();
+        const user = await this.ctx.model.User.findById(id);
+        if (!user) {
+          this.ctx.throw(404, 'User not found');
         }
-      );
-
-      return result.result.n !== 0 && result;
+        user.destroy();
+        // 删除用户组集合中与此模块相关的数据
+        await this.ctx.model.UserRole.destroy({
+          where: {
+            user_id: id,
+          },
+        });
+        await transaction.commit();
+        return id;
+      } catch (err) {
+        await transaction.rollback();
+        this.ctx.logger.error(err.message);
+        return '';
+      }
 
     }
 
-    async edit(id) {
+    async detail(id) {
       const result = await this.app.model.User.findOne({
-        id,
+        where: { id },
       });
 
       return result;
@@ -63,10 +72,9 @@ module.exports = app => {
       }
 
       try {
-        return await this.app.model.User.findByIdAndUpdate(id, newData, {
-          new: true,
-          runValidators: true,
-        }).exec();
+        return await this.app.model.User.update(newData, {
+          where: { id },
+        });
       } catch (err) {
         this.ctx.logger.error(err.message);
         return '';

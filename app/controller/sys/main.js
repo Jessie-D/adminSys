@@ -21,23 +21,32 @@ class sysMainController extends Controller {
       return false;
     }
 
-    // // 使用 mysql.escape 方法,做复杂的表关联查询
-    // const result = await ctx.app.mysql.get('back').query('select distinct bm.* from role_module rm left join module bm on rm.id=bm.id left join user_role ur on rm.role_id=ur.role_id WHERE ur.user_id=? AND bm.show=1', [ ctx.user.id ]);
-    let userGroupData = await ctx.model.Group.find({
-      users: ctx.user.id,
-    }, {
-      modules: 1,
+    const userGroupData = await ctx.model.UserRole.findAll({
+      where: {
+        user_id: ctx.user.id,
+      },
     });
 
-    userGroupData = userGroupData.map(item => item.toJSON().modules);
+    const roleModulePromise = [];
+    userGroupData.forEach(item => {
+      roleModulePromise.push(ctx.model.RoleModule.findAll({
+        where: {
+          role_id: item.role_id,
+        },
+        attributes: [ 'module_id' ],
+      }));
+    });
+    const moduleData = await Promise.all(roleModulePromise);
+
+    // moduleData = moduleData.map(item => item.toJSON().module_id);
 
     const userAuthModulePromise = [];
-
-    _.union(...userGroupData) // 去重
+    _.union(...moduleData) // 去重
       .forEach(item => {
         userAuthModulePromise.push(ctx.model.Module.findOne({
-          _id: item,
-          // isMenu: true,
+          where: {
+            id: item.module_id,
+          },
         }));
 
       });
@@ -51,8 +60,10 @@ class sysMainController extends Controller {
       if (!obj.isMenu) {
         const parentUriList = uriToList(obj.uri);
         parentUriList.pop();
-        parentNodePromise.push(ctx.model.Module.find({
-          uri: { $in: parentUriList },
+        parentNodePromise.push(ctx.model.Module.findAll({
+          where: {
+            uri: { $in: parentUriList },
+          },
         }));
       }
     });
@@ -82,7 +93,7 @@ class sysMainController extends Controller {
 
       // 查询该id下的所有子集
       data.forEach(function(obj) {
-        if (obj.parent_id === parentId && obj.isMenu) {
+        if (obj.parent_id === String(parentId) && obj.isMenu) {
           arr.push(Object.assign(obj, {
             children: subset(obj.id),
           }));

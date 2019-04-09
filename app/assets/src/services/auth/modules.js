@@ -8,7 +8,7 @@ export async function getList(params) {
 
 // 获取详情
 export async function getDetails({ id }) {
-  return request(`/nodeApi/auth/modules/${id}/edit`);
+  return request(`/nodeApi/auth/modules/${id}/detail`);
 }
 
 // 编辑信息

@@ -18,7 +18,7 @@ export async function getList(params) {
 
 // 获取用户组详情
 export async function getGroupsInfo({ id }) {
-  return request(`/nodeApi/auth/groups/${id}/edit`);
+  return request(`/nodeApi/auth/groups/${id}/detail`);
 }
 
 // 编辑用户组信息

@@ -501,21 +501,21 @@ export default class TableList extends PureComponent {
           <div>
             <a
               onClick={() => {
-                this.handleAuthVisible(true, record.key);
+                this.handleAuthVisible(true, record.id);
               }}
             >权限管理
             </a>
             <Divider type="vertical" />
             <a
               onClick={() => {
-                this.handleMemberVisible(true, record.key);
+                this.handleMemberVisible(true, record.id);
               }}
             >成员管理
             </a>
             <Divider type="vertical" />
             <a
               onClick={() => {
-                this.handleEditVisible(true, record.key);
+                this.handleEditVisible(true, record.id);
               }}
             >修改
             </a>
@@ -523,7 +523,7 @@ export default class TableList extends PureComponent {
             <Popconfirm
               title="确认删除？"
               onConfirm={() => {
-                this.handleRemove(record.key);
+                this.handleRemove(record.id);
               }}>
               <a
               >删除

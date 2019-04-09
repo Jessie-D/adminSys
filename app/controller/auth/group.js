@@ -46,8 +46,8 @@ class authGroupController extends Controller {
       return;
     }
 
-    const isExist = await this.ctx.model.Group.findOne({
-      name: query.name,
+    const isExist = await this.ctx.model.Role.findOne({
+      where: { name: query.name },
     });
 
     if (isExist) {
@@ -83,10 +83,10 @@ class authGroupController extends Controller {
     this.success();
   }
 
-  async edit(ctx) {
+  async detail(ctx) {
     const query = ctx.params;
 
-    const result = await ctx.service.auth.group.edit(query.id);
+    const result = await ctx.service.auth.group.detail(query.id);
 
     if (!result) {
 
@@ -105,11 +105,11 @@ class authGroupController extends Controller {
     const id = ctx.params.id;
     const query = ctx.request.body;
 
-    const isExist = await this.ctx.model.Group.findOne({
-      _id: {
-        $ne: id,
+    const isExist = await this.ctx.model.Role.findOne({
+      where: {
+        name: query.name,
+        id: { $ne: id },
       },
-      name: query.name,
     });
     if (isExist) {
       this.failure({
@@ -141,23 +141,30 @@ class authGroupController extends Controller {
   async getUser(ctx) {
     const query = ctx.params;
 
-    const addArr = (await ctx.model.Group.findOne({
-      _id: query.id,
-    })).users;
+    const role = (await ctx.model.Role.findOne({
+      where: {
+        id: query.id,
+      },
+    }));
+    const users = (await ctx.model.UserRole.findAll({
+      where: {
+        role_id: role.id,
+      },
+    }));
 
-    const allResult = await ctx.model.User.find();
+    const allResult = await ctx.model.User.findAll();
 
-    const allArr = [];
+    const allUser = [];
     allResult.forEach(obj => {
-      allArr.push({
-        key: obj._id,
+      allUser.push({
+        key: obj.id,
         label: obj.name,
       });
     });
 
     this.success({
-      addList: addArr ? addArr : [],
-      allList: allArr,
+      addList: users ? users.map(item => item.user_id) : [],
+      allList: allUser,
     });
   }
 
@@ -165,64 +172,43 @@ class authGroupController extends Controller {
     const roleId = ctx.params.id;
     const idList = ctx.request.body.idList;
 
-    const result = await ctx.model.Group.findByIdAndUpdate(roleId, {
-      $set: {
-        users: idList,
-      },
-    });
-
-    if (result === null) {
-      this.failure({
-        data: {
-          idList,
-        },
-        state: 404,
-      });
-
-      return false;
-    }
+    await ctx.service.auth.userRole.setUser(roleId, idList);
 
     this.success();
   }
 
   async getModule(ctx) {
     const query = ctx.params;
-
-    const addArr = (await ctx.model.Group.findOne({
-      _id: query.id,
-    })).modules;
+    const role = (await ctx.model.Role.findOne({
+      where: {
+        id: query.id,
+      },
+    }));
+    const modules = (await ctx.model.RoleModule.findAll({
+      where: {
+        role_id: role.id,
+      },
+      attributes: [ 'module_id' ],
+    }));
 
     const allResult = await ctx.service.auth.module.system({
-      parentId: query.parent_id || '',
+      parentId: '',
     });
 
     this.success({
-      addList: addArr ? addArr : [],
+      addList: modules ? modules.map(item => item.module_id) : [],
       allList: allResult,
     });
+
+
   }
 
   async setModule(ctx) {
     const roleId = ctx.params.id;
     const idList = ctx.request.body.idList;
 
-    // 给用户组集合插入user信息
-    const result = await ctx.model.Group.findByIdAndUpdate(roleId, {
-      $set: {
-        modules: idList,
-      },
-    });
 
-    if (result === null) {
-      this.failure({
-        data: {
-          idList,
-        },
-        state: 404,
-      });
-
-      return false;
-    }
+    await ctx.service.auth.roleModule.setModule(roleId, idList);
 
     this.success();
   }

@@ -37,13 +37,15 @@ export default class GlobalHeader extends PureComponent {
     return keys;
   }
   getPathByName(name){  
-    let item = this.getFlatMenus(this.props.menuData).some((item) => {
+    let menu ;
+     this.getFlatMenus(this.props.menuData).some((item,index) => {
       if (item.name===name) {
+        menu = item
         return true
       }  
       else return false
     })
-    return  item.path
+    return  menu.path
   }
   componentWillUnmount() {
     this.triggerResizeEvent.cancel();

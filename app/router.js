@@ -8,6 +8,7 @@ module.exports = app => {
   const can = app.middleware.role;
   // ------------------------------------------------------------------------------------------------【api路由】
 
+
   /* 用户管理 */
   app.get('/nodeApi/auth/users', can('auth.user.index'), 'auth.user.index'); // 用户列表
   app.post('/nodeApi/auth/users', can('auth.user.create'), 'auth.user.create'); // 新建用户
@@ -42,6 +43,10 @@ module.exports = app => {
   app.get('/nodeApi/sys/editProfile/:id/detail', can('sys.editProfile.detail'), 'sys.editProfile.detail'); // 编辑资料-用户详情
   app.put('/nodeApi/sys/editProfile/:id', can('sys.editProfile.update'), 'sys.editProfile.update'); // 编辑资料-修改用户详情
   app.put('/nodeApi/sys/editProfile/pwd/:id', can('sys.editProfile.setPassword'), 'sys.editProfile.setPassword'); // 编辑资料-重置密码
+
+  /* 操作日志*/
+  app.get('/nodeApi/sys/logs', 'sys.log.index'); // 日志列表
+  app.post('/nodeApi/sys/logs', 'sys.log.create'); // 添加日志
 
   /* passport */
   app.get('/nodeApi/sys/login', 'sys.passport.login'); // 登录

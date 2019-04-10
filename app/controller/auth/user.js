@@ -227,13 +227,10 @@ class UserController extends Controller {
     }
 
     const result = (await ctx.model.User.findOne({
-      _id: ctx.user.id,
-    }, {
-      _id: 0,
-      account: 1,
-      name: 1,
-      email: 1,
-      mobile: 1,
+      where: {
+        id: ctx.user.id,
+      },
+      attributes: [ 'account', 'name', 'email', 'mobile' ],
     })).toJSON();
 
     this.success({

@@ -337,8 +337,14 @@ export default class TableList extends PureComponent {
   handleEditSubmit = (fieldsValue, resetFormCallBack) => {
     const { editModal: { isEdit } } = this.state;
     const { dispatch } = this.props;
+     Object.keys(fieldsValue).forEach(item => {
+       
+       if(fieldsValue[item]===null){
+        delete fieldsValue[item]
+       }
+     }); // 过滤结果为null的项 
     if (isEdit) {
-      console.log(fieldsValue);
+      
       dispatch({
         type: 'modules/edit',
         payload: {

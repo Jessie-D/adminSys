@@ -63,13 +63,8 @@ module.exports = app => {
     async update(id, data) {
 
       try {
-        const module = await this.ctx.model.Module.findById(id);
-        if (!module) {
-          this.ctx.throw(404, 'module not found');
-        }
-        return module.update({
-          ...data,
-          parent_id: data.parent_id || '',
+        return await this.ctx.model.Module.update(data, {
+          where: { id },
         });
       } catch (err) {
         this.ctx.logger.error(err.message);

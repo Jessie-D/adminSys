@@ -7,7 +7,7 @@ module.exports = app => {
     async index(pageNumber = 1, pageSize = 20, query) {
       pageNumber = Number(pageNumber);
       pageSize = Number(pageSize);
-      const data = await this.ctx.model.User.findAndCountAll({
+      const data = await this.ctx.model.Log.findAndCountAll({
         where: query, // WHERE 条件
         offset: (pageNumber - 1) * pageSize,
         limit: pageSize,

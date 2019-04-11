@@ -23,7 +23,7 @@ const getIcon = (icon) => {
   return icon;
 };
 
-export const getMeunMatcheys = (flatMenuKeys, path) => {
+export const getMenuMatchkeys = (flatMenuKeys, path) => {
   return flatMenuKeys.filter((item) => {
     return pathToRegexp(item).test(path);
   });
@@ -36,15 +36,18 @@ export default class SiderMenu extends PureComponent {
     // this.flatMenuKeys = this.getFlatMenuKeys(props.menuData);
     const pathname =  window.location.hash.split('#')[1] || '';
     let openKeys = urlToList(pathname);
+     
     this.state = {
-      openKeys:openKeys// this.getDefaultCollapsedSubMenus(props),
+      openKeys:openKeys // this.getDefaultCollapsedSubMenus(props),
     };
   }
-  componentDidUpdate (prevProps) {
-    if(prevProps.location.pathname==='/'){
-      return
+  componentDidUpdate (prevProps,state) {
+    if(  prevProps.location.hash===''&&this.props.menuData.length&&state.openKeys.length===0){
+      this.setState({
+        openKeys: [this.props.menuData[0].path],
+      });
     }
-    else if (prevProps.location.pathname !== this.props.location.pathname) {
+    if (prevProps.location.hash !== this.props.location.hash) {
       this.setState({
         openKeys: this.getDefaultCollapsedSubMenus(prevProps),
       });
@@ -65,7 +68,7 @@ export default class SiderMenu extends PureComponent {
     const { location: { pathname } } = props || this.props;
     return urlToList(pathname)
       .map((item) => {
-        return getMeunMatcheys(this.flatMenuKeys, item)[0];
+        return getMenuMatchkeys(this.flatMenuKeys, item)[0];
       })
       .filter(item => item);
   }
@@ -168,7 +171,7 @@ export default class SiderMenu extends PureComponent {
   getSelectedMenuKeys = () => {
     const { location: { pathname } } = this.props;
     return urlToList(pathname).map(itemPath =>
-      getMeunMatcheys(this.flatMenuKeys, itemPath).pop(),
+      getMenuMatchkeys(this.flatMenuKeys, itemPath).pop(),
     );
   };
   // 转化路径
@@ -200,7 +203,6 @@ export default class SiderMenu extends PureComponent {
   render () {
     const { logo, collapsed, onCollapse } = this.props;
     const { openKeys } = this.state;
-
     // Don't show popup menu when it is been collapsed
     const menuProps = collapsed
       ? {}

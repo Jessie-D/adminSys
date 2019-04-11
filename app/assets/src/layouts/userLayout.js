@@ -7,19 +7,6 @@ import GlobalFooter from 'ant-design-pro/lib/GlobalFooter';
 import styles from './userLayout.less';
 import { title, company, version, logo, siderMenuTitle } from './../utils/config';
 
-const links = [{
-  key: 'help',
-  title: '帮助',
-  href: '',
-}, {
-  key: 'privacy',
-  title: '隐私',
-  href: '',
-}, {
-  key: 'terms',
-  title: '条款',
-  href: '',
-}];
 
 const copyright = <Fragment>Copyright <Icon type="copyright" /> {version} {company}</Fragment>;
 
@@ -45,7 +32,7 @@ class UserLayout extends React.PureComponent {
             </div>
             {this.props.children}
           </div>
-          <GlobalFooter links={links} copyright={copyright} />
+          <GlobalFooter   copyright={copyright} />
         </div>
       </DocumentTitle>
     );

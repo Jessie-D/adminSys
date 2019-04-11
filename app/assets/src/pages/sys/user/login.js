@@ -65,8 +65,8 @@ export default class LoginPage extends Component {
               !login.submitting &&
               this.renderMessage('账户或密码错误')
             }
-            <UserName name="username" placeholder="请输入用户名（test）" />
-            <Password name="password" placeholder="请输入密码（123456）" />
+            <UserName name="username" placeholder="请输入用户名（test）" rules={[{ required: true, message: '请输入用户名!' }]}/>
+            <Password name="password" placeholder="请输入密码（123456）" rules={[{ required: true, message: '请输入密码!' }]}/>
           </Tab>
           <Tab key="mobile" tab="手机号登录">
             {
@@ -77,19 +77,8 @@ export default class LoginPage extends Component {
             }
             <Mobile name="mobile" />
             <Captcha name="captcha" />
-          </Tab>
-          <div>
-            <Checkbox checked={this.state.autoLogin} onChange={this.changeAutoLogin}>自动登录</Checkbox>
-            <a style={{ float: 'right' }} href="">忘记密码</a>
-          </div>
-          <Submit loading={submitting}>登录</Submit>
-          <div className={styles.other}>
-            其他登录方式
-            <Icon className={styles.icon} type="alipay-circle" />
-            <Icon className={styles.icon} type="taobao-circle" />
-            <Icon className={styles.icon} type="weibo-circle" />
-            <Link className={styles.register} to="/user/register">注册账户</Link>
-          </div>
+          </Tab> 
+          <Submit loading={submitting}>登录</Submit> 
         </Login>
       </div>
     );

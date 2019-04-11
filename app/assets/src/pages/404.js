@@ -7,6 +7,6 @@ import {title} from './../utils/config';
 
 export default () => (
   <DocumentTitle title={`404 - ${title}`}>
-    <Exception type="404" style={{ minHeight: 500, height: '80%' }} linkElement={Link} />
+    <Exception type="404" style={{ minHeight: 500, height: '80%' }} linkElement={Link} backText="返回首页"/>
   </DocumentTitle>
 );

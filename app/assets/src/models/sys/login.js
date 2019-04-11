@@ -29,11 +29,12 @@ export default {
         type: 'changeLoginStatus',
         payload: {
           type: 'account',
+          status:'0',
           currentAuthority: response.result.groupList.length ? response.result.groupList : 'guest',
         },
       });
 
-      window.location.href = redirect ? redirect : '/';
+       window.location.href = redirect ? redirect : '/';
     },
     *logout (_, { put, select, call }) {
       yield call(logout);

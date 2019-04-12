@@ -135,7 +135,7 @@ const AuthModal = connect(state => ({
       type: 'group/changeAuth',
       payload: {
         ...data,
-        addList: selectedKeys,
+        addList: selectedKeys.checked,
       },
     });
   };
@@ -170,6 +170,8 @@ const AuthModal = connect(state => ({
           data.allList ? (
             <Tree
               checkable
+              checkStrictly
+              checkedKeys={data.addList.map(item => String(item))}
               defaultExpandedKeys={data.addList.map(item => String(item))}
               defaultSelectedKeys={data.addList.map(item => String(item))}
               defaultCheckedKeys={data.addList.map(item => String(item))}

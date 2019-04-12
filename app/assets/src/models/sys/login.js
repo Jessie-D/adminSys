@@ -29,6 +29,7 @@ export default {
         type: 'changeLoginStatus',
         payload: {
           type: 'account',
+          status:'0',
           currentAuthority: response.result.groupList.length ? response.result.groupList : 'guest',
         },
       });

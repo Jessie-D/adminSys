@@ -47,11 +47,11 @@ class authMenuController extends Controller {
         required: false,
         allowEmpty: true,
       },
-      isLeafNode: {
-        type: 'boolean',
-        required: false,
-        allowEmpty: true,
-      },
+      // isLeafNode: {
+      //   type: 'boolean',
+      //   required: false,
+      //   allowEmpty: true,
+      // },
       iconfont: {
         type: 'string',
         required: false,
@@ -152,7 +152,7 @@ class authMenuController extends Controller {
 
     const result = (await ctx.service.auth.module.detail(query.id)).toJSON();
 
-    this.success({ ...result, isMenu: Boolean(result.isMenu), isLeafNode: Boolean(result.isLeafNode) });
+    this.success({ ...result, isMenu: Boolean(result.isMenu) });
   }
 
   async update(ctx) {
@@ -179,11 +179,11 @@ class authMenuController extends Controller {
         required: false,
         allowEmpty: true,
       },
-      isLeafNode: {
-        type: 'boolean',
-        required: true,
-        allowEmpty: false,
-      },
+      // isLeafNode: {
+      //   type: 'boolean',
+      //   required: true,
+      //   allowEmpty: false,
+      // },
       iconfont: {
         type: 'string',
         required: false,

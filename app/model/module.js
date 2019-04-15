@@ -12,7 +12,7 @@ module.exports = app => {
     uri: STRING,
     describe: STRING,
     isMenu: INTEGER,
-    isLeafNode: INTEGER,
+    // isLeafNode: INTEGER,
     url: STRING,
     iconfont: STRING,
     sort: INTEGER,

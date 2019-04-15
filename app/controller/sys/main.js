@@ -56,6 +56,7 @@ class sysMainController extends Controller {
     result = result.filter(item => !!item); // 过滤结果为null的项
 
     const parentNodePromise = [];
+    const buttonModules = [];
     result.forEach(function(obj) {
       if (!obj.isMenu) {
         const parentUriList = uriToList(obj.uri);
@@ -65,6 +66,7 @@ class sysMainController extends Controller {
             uri: { $in: parentUriList },
           },
         }));
+        buttonModules.push(obj);
       }
     });
 
@@ -126,7 +128,7 @@ class sysMainController extends Controller {
           icon: obj.iconfont,
           name: obj.name,
           path: obj.url || '',
-          isLeafNode: obj.isLeafNode || false,
+          // isLeafNode: obj.isLeafNode || false,
           describe: obj.describe,
           children: obj.children && convert(obj.children),
         });
@@ -134,7 +136,10 @@ class sysMainController extends Controller {
       return arrMap;
     };
 
-    this.success(convert(subset('')));
+    this.success({
+      menus: convert(subset('')),
+      buttonModules,
+    });
   }
 }
 module.exports = sysMainController;

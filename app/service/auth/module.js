@@ -21,7 +21,11 @@ module.exports = app => {
     }
 
     async create(data) {
-      data = { ...data, isMenu: data.isMenu ? 1 : 0, isLeafNode: data.isLeafNode ? 1 : 0 };
+      data = {
+        ...data,
+        isMenu: data.isMenu ? 1 : 0,
+        // isLeafNode: data.isLeafNode ? 1 : 0,
+      };
       const result = this.ctx.model.Module.create(data);
 
       return result;
@@ -55,7 +59,7 @@ module.exports = app => {
     async detail(id) {
       const result = await this.ctx.model.Module.findOne({
         where: { id },
-        attributes: [ 'id', 'name', 'url', 'uri', 'iconfont', 'describe', 'sort', 'isMenu', 'isLeafNode', 'url', 'parent_id' ],
+        attributes: [ 'id', 'name', 'url', 'uri', 'iconfont', 'describe', 'sort', 'isMenu', 'url', 'parent_id' ],
       });
       return result;
     }

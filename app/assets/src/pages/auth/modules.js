@@ -18,7 +18,7 @@ const EditModal = connect(state => ({
   const { visible, onOk, onCancel, form, isEdit, dispatch,
     pageModel: { details: data, breadcrumb: breadcrumbData, systemTree } } = props;
   const moduleParent = breadcrumbData[breadcrumbData.length - 1];
-
+ 
   const transform = (list) => {
     if (!list || !list.length) {
       return [];
@@ -26,7 +26,7 @@ const EditModal = connect(state => ({
 
     return list.map((obj) => {
       return {
-        label: obj.name,
+        title: obj.name,
         value: String(obj.id),
         key: obj.id,
         children: transform(obj.children),
@@ -36,13 +36,15 @@ const EditModal = connect(state => ({
 
   const treeData = transform(systemTree.data);
 
-  const onChange = (value) => {
+  const onChange = (value) => {  
+    
     dispatch({
-      type: 'modules/changeSystemTreeCheckedId',
+      type: 'modules/setSystemTreeCheckedId',
       payload: {
-        id: value,
+        id:value,
+        details:form.getFieldsValue(),  
       },
-    });
+    }); 
   };
 
   const renderModuleParentItem = (parentId) => {
@@ -96,7 +98,7 @@ const EditModal = connect(state => ({
       }}
       onCancel={() => {
         onCancel();
-        form.resetFields();
+        //form.resetFields();
       }}
     >
       <Form>
@@ -117,8 +119,8 @@ const EditModal = connect(state => ({
             rules: [
               { required: true, message: '该项为必填项' },
             ],
-          })(
-            <Input placeholder="请输入" />
+          })( 
+            <Input  placeholder="请输入" />
           )}
         </FormItem>
         <FormItem
@@ -144,7 +146,7 @@ const EditModal = connect(state => ({
             <Switch />
           )}
         </FormItem>
-        <FormItem
+        {/* <FormItem
           labelCol={{ span: 6 }}
           wrapperCol={{ span: 15 }}
           label="是否是叶子节点"
@@ -152,7 +154,7 @@ const EditModal = connect(state => ({
           {form.getFieldDecorator('isLeafNode', { valuePropName: 'checked',initialValue: data.isLeafNode })(
             <Switch />
           )}
-        </FormItem>
+        </FormItem> */}
         {form.getFieldValue('isMenu')?(<FormItem
           labelCol={{ span: 6 }}
           wrapperCol={{ span: 15 }}
@@ -298,8 +300,8 @@ export default class TableList extends PureComponent {
 
   // 显示or隐藏编辑弹框
   handleEditVisible = (flag, id = '') => {
-    const { dispatch } = this.props;
-
+    const { pageModel: { breadcrumb } ,dispatch} = this.props;
+    //flag 是否关闭弹窗
     if (flag) {
       // 根据有没有传id判断是否是编辑弹窗
       if (id) {
@@ -314,14 +316,17 @@ export default class TableList extends PureComponent {
           isVisible: true,
         }));
       } else {
+        dispatch({
+          type: 'modules/changeDetails',
+          payload: {
+            uri: breadcrumb[breadcrumb.length - 1].uri   
+          },
+        }); 
         this.setState(Object.assign(this.state.editModal, {
           isEdit: false,
           isVisible: true,
         }));
-      }
-      this.setState(Object.assign(this.state.editModal, {
-        isVisible: true,
-      }));
+      } 
     } else {
       this.setState(Object.assign(this.state.editModal, {
         isEdit: false,
@@ -410,7 +415,7 @@ export default class TableList extends PureComponent {
   }
 
   // 进入模块
-  handleIntoModule = (id, name) => {
+  handleIntoModule = (id, name,uri) => {
     const { dispatch } = this.props;
 
     dispatch({
@@ -418,6 +423,7 @@ export default class TableList extends PureComponent {
       payload: {
         id,
         name,
+        uri,
       },
     });
   }
@@ -594,7 +600,7 @@ export default class TableList extends PureComponent {
         render: (text, record) => (
           <a
             onClick={() => {
-              this.handleIntoModule(record.id, text);
+              this.handleIntoModule(record.id, text,record.uri);
             }}
           >{text}
           </a>),

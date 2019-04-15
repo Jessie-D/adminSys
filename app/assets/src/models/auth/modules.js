@@ -13,6 +13,7 @@ export default {
     breadcrumb: [{
       id: '',
       name: 'Root',
+      uri:'',
     }],
     systemTree: {
       checkedId: 0,
@@ -158,7 +159,7 @@ export default {
       if (callback) callback();
     },
 
-    *intoModule({ payload: { id, name }, callback }, { put, select }) {
+    *intoModule({ payload: { id, name,uri }, callback }, { put, select }) {
       const query = yield select(state => state.modules.data.query);
       yield put({
         type: 'fetch',
@@ -174,6 +175,7 @@ export default {
         payload: {
           id,
           name,
+          uri,
         },
       });
 
@@ -206,7 +208,7 @@ export default {
         type: 'save',
         payload: {
           systemTree: {
-            checkedId: 0,
+            //checkedId: 0,
             data: response.result,
           },
         },
@@ -214,15 +216,21 @@ export default {
 
       if (callback) callback();
     },
-    *setSystemTreeCheckedId({ payload: { id }, callback }, { put }) {
-      yield put({
-        type: 'changeSystemTreeCheckedId',
-        payload: {
-          id,
-        },
-      });
+    *setSystemTreeCheckedId({ payload :{details,id}}, { put,call }) {
+      const response = yield call(getDetails, {id});
 
-      if (callback) callback();
+      if (!response) {
+        return;
+      }
+      
+      let  moduleNames = details.uri.split('.');
+      yield put({
+        type: 'changeDetails',
+        payload: {
+          ...details,
+          uri:`${response.result.uri}.${moduleNames[moduleNames.length-1]}`,
+        }
+      });
     },
   },
 
@@ -251,6 +259,7 @@ export default {
         breadcrumb:[{
           id: '',
           name: 'Root',
+          uri:'',
         }],
       };
     },
@@ -284,7 +293,7 @@ export default {
       return {
         ...state,
         systemTree: {
-          checkedId: action.payload.id,
+          //checkedId: action.payload.id,
           data: state.systemTree.data,
         },
       };

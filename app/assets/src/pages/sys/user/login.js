@@ -61,8 +61,7 @@ export default class LoginPage extends Component {
           <Tab key="account" tab="账户密码登录">
             {
               login.status !== '0' &&
-              login.type === 'account' && 
-              !login.submitting &&
+              login.type === 'account' &&  
               this.renderMessage('账户或密码错误')
             }
             <UserName name="username" placeholder="请输入用户名（test）" rules={[{ required: true, message: '请输入用户名!' }]}/>
@@ -71,8 +70,7 @@ export default class LoginPage extends Component {
           <Tab key="mobile" tab="手机号登录">
             {
               login.status === 'error' &&
-              login.type === 'mobile' &&
-              !login.submitting &&
+              login.type === 'mobile' && 
               this.renderMessage('验证码错误')
             }
             <Mobile name="mobile" />

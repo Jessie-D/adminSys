@@ -108,7 +108,7 @@ class BasicLayout extends Component {
                 copyright={
                   <Fragment>
                     Copyright <Icon type="copyright" /> {version} {company}
-                </Fragment>
+                  </Fragment>
                 }
               />
             </Footer>

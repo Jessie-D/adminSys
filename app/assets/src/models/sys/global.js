@@ -8,6 +8,7 @@ export default {
     collapsed: false,
     // notices: [],
     sidebar:[],
+    buttonModules:[],
   },
 
   effects: {
@@ -46,7 +47,8 @@ export default {
     save(state, { payload }){
       return {
         ...state,
-        sidebar: payload,
+        sidebar: payload.menus,
+        buttonModules:payload.buttonModules,
       };
     },
     changeLayoutCollapsed(state, { payload }) {

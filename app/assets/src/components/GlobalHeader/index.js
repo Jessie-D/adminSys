@@ -30,7 +30,7 @@ export default class GlobalHeader extends PureComponent {
         keys = keys.concat(this.getFlatMenus(item.children));
       }
         
-      if(item.isLeafNode){
+      if(item.children.length==0){
         keys.push(item);
       }
     });

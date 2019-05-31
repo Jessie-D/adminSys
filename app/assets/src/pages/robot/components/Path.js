@@ -1,6 +1,8 @@
 import React from 'react';
 
-export default function JumpNode({ id }) {
+export default function Path({data:{decisionId:id,parentId,answerIds},list}) {
+
+    
   return (
     <>
       <path

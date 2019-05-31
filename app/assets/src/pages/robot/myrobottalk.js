@@ -4,15 +4,10 @@ import { Row, Col, Card, Form, Input, Icon, Button, Dropdown, Menu, Modal, Table
 import PageHeaderLayout from './../../layouts/pageHeaderLayout';
 import JumpNode from './components/JumpNode';
 import NormalNode from './components/NormalNode';
-import Path from './components/Path';
 import decisionTreeData from './decisionTree1';
-const FormItem = Form.Item;
-const getValue = obj => Object.keys(obj).map(key => obj[key]).join(',');
 import '../../global.less'
 
-@connect(state => ({
-  pageModel: state.users,
-}))
+ 
 export default class Robot extends PureComponent {
   state = {
     data: [],
@@ -100,19 +95,51 @@ export default class Robot extends PureComponent {
         levelLeft  = j==0?levelLeft: levelLeft+this.getEle(`topology-node-${levelNodes[i][j-1]}`).offsetWidth+25;
          let left =  levelLeft
          let top = levalTop
-         eleNode.setAttribute('style', `position: absolute; left: ${left}px; top: ${top}px; z-index: 999;`)
+         eleNode.setAttribute('style', `position: absolute; left: ${left}px; top: ${top}px;`)
        }
     }
+
+    //渲染路径
+    let path = "";
+    for(let item of data.decisionItemBOList){
+      if(item.parentId){
+        for(let aName of item.answerIds){
+          let node = this.getEle(`topology-node-${item.decisionId}`);
+          let pNode = this.getEle(`topology-node-${item.parentId}`);
+          let btn = this.getEle(`${item.parentId}-${aName}`);
+          path +=  `<path
+                    stroke-width="2"
+                    stroke="#AAB7C4"
+                    fill="none"
+                    d=" 
+                        M ${pNode.offsetLeft+btn.offsetLeft+btn.offsetWidth/2 } ${pNode.offsetTop+btn.offsetTop+23}
+                        L ${node.offsetLeft+node.offsetWidth/2},${node.offsetTop-4} 
+                    "
+                    style="pointer-events: all;"
+                  /> 
+            <path
+              class="topology-line-end-triangle"
+              fill="#AAB7C4"
+              stroke="none"
+              data-type="end"
+              data-json='{"origin":{"start":"7617921-否定","end":"7617923"},"po":{"start":{"x":5024,"y":5104},"end":{"x":4886,"y":5156}}}'
+              d=" M ${node.offsetLeft+node.offsetWidth/2 } ${node.offsetTop-4} 
+                      l 4 0
+                      l -4 8
+                      l -4 -8
+                      Z
+                  "
+              style="pointer-events: all;"
+            />` 
+        }
+      }
+    }  
+    
+
+    document.querySelector('.topology-svg').innerHTML= path 
  
   }
-
-  renderPath(data) {
-    return (
-      <svg className="topology-svg">
-        <Path />
-      </svg>
-    );
-  }
+ 
 
   renderFlow(data) {
     return (
@@ -124,7 +151,7 @@ export default class Robot extends PureComponent {
             <JumpNode key={item.decisionId} data={item} />
           );
         })}
-        {this.renderPath(data)}
+        <svg className="topology-svg"></svg>
       </div>
     );
   }

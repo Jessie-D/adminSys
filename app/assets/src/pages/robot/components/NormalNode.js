@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function JumpNode({data:{decisionId:id,name,knowledge,childrenAnswerIds}  }) {
+export default function NormalNode({data:{decisionId:id,name,knowledge,childrenAnswerIds}  }) {
   return (
     <div
       id={`topology-node-${id}`}

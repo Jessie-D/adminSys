@@ -16,6 +16,8 @@
     "egg-view-nunjucks": "^2.2.0",
     "mysql2": "^1.6.5",
     "passport-local": "^1.0.0",
+    "react-beautiful-dnd": "^11.0.3",
+    "styled-components": "^4.2.1",
     "underscore": "^1.8.3"
   },
   "devDependencies": {

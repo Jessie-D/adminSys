@@ -25,9 +25,7 @@ export default class Robot extends Component {
   }
 
   componentDidMount() {
-    
-    this.autoLayOut(decisionTreeData.data);
-    this.setCenter();
+    //this.setCenter();
     //const { dispatch } = this.props;
 
     // 获取列表数据
@@ -37,7 +35,6 @@ export default class Robot extends Component {
   }
 
   componentDidUpdate() {
-    console.log("componentDidUpdate ")
     //this.autoLayOut(decisionTreeData.data);
   }
 
@@ -114,18 +111,13 @@ export default class Robot extends Component {
           let node = this.getEle(`topology-node-${item.decisionId}`);
           let pNode = this.getEle(`topology-node-${item.parentId}`);
           let btn = this.getEle(`${item.parentId}-${aName}`);
-          let x0= pNode.offsetLeft+btn.offsetLeft+btn.offsetWidth/2 ;
-          let y0= pNode.offsetTop+btn.offsetTop+23;
-          let x1= node.offsetLeft+node.offsetWidth/2;
-          let y1= node.offsetTop-8;
-          let f = -35;
           path +=  `<path
                     stroke-width="2"
                     stroke="#AAB7C4"
                     fill="none"
                     d=" 
-                        M ${x0} ${y0}
-                        C ${x0},${y1+f} ${x1},${y0-f} ${x1},${y1} 
+                        M ${pNode.offsetLeft+btn.offsetLeft+btn.offsetWidth/2 } ${pNode.offsetTop+btn.offsetTop+23}
+                        L ${node.offsetLeft+node.offsetWidth/2},${node.offsetTop-4} 
                     "
                     style="pointer-events: all;"
                   /> 
@@ -135,7 +127,7 @@ export default class Robot extends Component {
               stroke="none"
               data-type="end"
               data-json='{"origin":{"start":"7617921-否定","end":"7617923"},"po":{"start":{"x":5024,"y":5104},"end":{"x":4886,"y":5156}}}'
-              d=" M ${x1} ${y1} 
+              d=" M ${node.offsetLeft+node.offsetWidth/2 } ${node.offsetTop-4} 
                       l 4 0
                       l -4 8
                       l -4 -8
@@ -152,30 +144,35 @@ export default class Robot extends Component {
  
   }
  
-  // renderFlow(data) {
-  //   return (
-  //     <div className="topology-canvas">
-  //       {data.decisionItemBOList.map(item => {
-  //         return item.nodeType === 0 ? (
-  //           <NormalNode key={item.decisionId} data={item} />
-  //         ) : (
-  //           <JumpNode key={item.decisionId} data={item} />
-  //         );
-  //       })}
-  //       <svg className="topology-svg"></svg>
-  //     </div>
-  //   );
-  // }
 
   renderFlow(data) {
     return ( <>
         {
           data.decisionItemBOList.map(item => {
-            return item.nodeType === 0 ?  
-                        <NormalNode key={item.decisionId}  data={item} />
-                      : <JumpNode key={item.decisionId} data={item}  />
+            return  <Draggable
+                      draggableId={item.decisionId}
+                      index={this.props.index} 
+                      key={item.decisionId}
+                    >
+                    {(provided, snapshot) => item.nodeType === 0 ? (
+                        <NormalNode key={item.decisionId} 
+                            data={item} 
+                            {...provided.draggableProps}
+                            {...provided.dragHandleProps}
+                            innerRef={provided.innerRef}
+                            isDragging={snapshot.isDragging}
+                        />
+                      ) : (
+                        <JumpNode key={item.decisionId} data={item}
+                          {...provided.draggableProps}
+                            {...provided.dragHandleProps}
+                            innerRef={provided.innerRef}
+                            isDragging={snapshot.isDragging}
+                        />
+                  )}
+                </Draggable>
             }
-          )
+          )}
         }
         <svg className="topology-svg"></svg>
       </>
@@ -197,44 +194,31 @@ export default class Robot extends Component {
               {(provided, snapshot) => (
                 <div className="refactor-flow">
                   <div className="flow-tools">
-                    <div className="flow-tools-templates" style={{ width: '180px' }}>
-                      <Draggable draggableId="draggable-0" index={0}>
-                        {(provided, snapshot) => (
-                          <ActionBtn id="0" content="普通节点"  
-                            innerRef={provided.innerRef}
-                            {...provided.draggableProps}
-                            {...provided.dragHandleProps}
-                          /> 
-                        )}
-                      </Draggable>
-                      <Draggable draggableId="draggable-1" index={1}>
-                        {(provided, snapshot) => (
-                          <ActionBtn id="1" content="跳转节点"  
-                            innerRef={provided.innerRef}
-                            {...provided.draggableProps}
-                            {...provided.dragHandleProps}
-                          /> 
-                        )}
-                      </Draggable> 
+                    <div className="flow-tools-templates" style={{ width: '260px' }}>
+                      <ActionBtn id="0" content="普通节点"/>
+                      <ActionBtn id="1" content="跳转节点"/>
                     </div>
                   </div>
                   <div className="react-contextmenu-wrapper">
                     <div className="topology-container">
                       <div className="topology-wrapper">
+                        
                                     <div className="topology-canvas"
                                           ref={provided.innerRef}
-                                          {...provided.droppableProps} 
-                                        > 
-                                        {this.renderFlow(decisionTreeData.data)}
-                                        {provided.placeholder}
+                                          {...provided.droppableProps}
+                                          isdraggingover={snapshot.isDraggingOver}
+                                        >
+                                      {this.renderFlow(decisionTreeData.data)}
                                     </div>
+                                
+                
                       </div>
                       <div className="topology-tools">
                         <div className="topology-tools-btn" onClick={this.setCenter}>
                           <Icon type="border-inner" />
                           <div className="tooltip">定位中心</div>
                         </div>
-                        <div className="topology-tools-btn"  onClick={this.autoLayOut.bind(this,decisionTreeData.data)}>
+                        <div className="topology-tools-btn"> 
                           <Icon type="apartment" />
                           <div className="tooltip">自动布局</div>
                         </div>

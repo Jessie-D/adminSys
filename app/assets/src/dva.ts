@@ -7,7 +7,7 @@ export function config() {
   return {
     onError(err: { preventDefault: Function, message: Function }) {
       err.preventDefault();
-      message.error(err.message);
+     // message.error(err.message);
     },
     initialState: {
       // user: {

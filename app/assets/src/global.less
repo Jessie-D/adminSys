@@ -76,6 +76,7 @@
 
   .topology-container .topology-anchor-wrapper {
     position: relative;
+    cursor: crosshair;
   }
 
   .flow-node .flow-node-branches-wrapper .flow-node-branch {
@@ -115,13 +116,6 @@
     flex-direction: column;
   }
 
-  .refactor-flow,
-  .refactor-flow>.react-contextmenu-wrapper {
-    width: 100%;
-    height: 100%;
-  }
-
-  .flow-tools,
   .flow-tools-templates {
     display: -ms-flexbox;
     display: flex;
@@ -140,6 +134,12 @@
     text-align: center;
     border: 1px solid #e0e0e0;
     border-radius: 3px;
+  }
+
+  .refactor-flow,
+  .refactor-flow > .react-contextmenu-wrapper {
+    width: 100%;
+    height: 100%;
   }
 
   .topology-container {
@@ -226,10 +226,12 @@
   .topology-container .topology-tools-btn:nth-child(n+2) {
     margin-top: 10px;
   }
+
   .topology-node-wrapper {
     position: relative;
     display: inline-block;
   }
+
   .topology-node-wrapper .topology-node-preview {
     top: 0;
     left: 0;
@@ -247,5 +249,9 @@
     z-index: 1;
     background: #fff;
     display: inline-block;
+  }
+
+  .topology-node-wrapper .topology-node-selected {
+    border-color: #1f8cec;
   }
 }

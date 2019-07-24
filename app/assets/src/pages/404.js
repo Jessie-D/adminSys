@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'dva/router';
+let {Link} = require("dva").router;
 import DocumentTitle from 'react-document-title';
 import Exception from 'ant-design-pro/lib/Exception';
 import {title} from './../utils/config';

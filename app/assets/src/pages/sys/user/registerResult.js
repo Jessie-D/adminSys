@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button } from 'antd';
-import { Link } from 'dva/router';
+let {Link} = require("dva").router;
 import Result from 'ant-design-pro/lib/Result';
 import styles from './registerResult.less';
 

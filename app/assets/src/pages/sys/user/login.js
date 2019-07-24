@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'dva';
-import { Link } from 'dva/router';
+let {Link} = require("dva").router;
 import { Checkbox, Alert, Icon } from 'antd';
 import Login from 'ant-design-pro/lib/Login';
 import styles from './login.less';

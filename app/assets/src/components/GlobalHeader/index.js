@@ -3,7 +3,7 @@ import { Menu, Icon, Spin, Tag, Dropdown, Avatar, Divider } from 'antd';
 import moment from 'moment';
 import groupBy from 'lodash/groupBy';
 import Debounce from 'lodash-decorators/debounce';
-import { Link } from 'dva/router';
+let {Link} = require("dva").router;
 import router from 'umi/router';
 // import NoticeIcon from '../NoticeIcon';
 import HeaderSearch from 'ant-design-pro/lib/HeaderSearch';

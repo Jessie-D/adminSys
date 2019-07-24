@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react';
-import { Link } from 'dva/router';
+let {Link} = require("dva").router;
 import { connect } from 'dva';
 import DocumentTitle from 'react-document-title';
 import { Icon } from 'antd';

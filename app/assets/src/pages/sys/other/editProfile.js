@@ -1,27 +1,21 @@
 // import {PageHeader as PageHeaderLayout} from 'ant-design-pro/lib';
 import PageHeaderLayout from '../../../layouts/pageHeaderLayout';
 import React, { PureComponent } from 'react';
-import { routerRedux } from 'dva/router';
+let { routerRedux } = require('dva').router;
 import { connect } from 'dva';
-import {
-  Form,
-  Input,
-  Button,
-  Card,
-  Modal,
-} from 'antd';
+import { Form, Input, Button, Card, Modal } from 'antd';
 
 const FormItem = Form.Item;
 
 // 重置密码弹框
-const ResetPwdModal = Form.create()((props) => {
+const ResetPwdModal = Form.create()(props => {
   const { visible, form, onCancel, onOk } = props;
 
   return (
     <Modal
       title="重置密码"
       visible={visible}
-      onOk={(e) => {
+      onOk={e => {
         e.preventDefault();
 
         form.validateFields((err, fieldsValue) => {
@@ -47,9 +41,7 @@ const ResetPwdModal = Form.create()((props) => {
             { min: 6, message: '请输入6-18位密码' },
             { max: 18, message: '请输入6-18位密码' },
           ],
-        })(
-          <Input type="password" placeholder="请输入" />
-        )}
+        })(<Input type="password" placeholder="请输入" />)}
       </FormItem>
     </Modal>
   );
@@ -81,20 +73,26 @@ export default class BasicForms extends PureComponent {
   }
 
   // 显示or隐藏重置密码弹框
-  handleResetPwdVisible = (flag) => {
-    const { pageModel: { currentUser: data } } = this.props;
+  handleResetPwdVisible = flag => {
+    const {
+      pageModel: { currentUser: data },
+    } = this.props;
     const { id } = data;
 
-    this.setState(Object.assign(this.state.resetPwdModal, {
-      isVisible: flag,
-    }));
-    this.setState(Object.assign(this.state.resetPwdModal.data, {
-      id,
-    }));
-  }
+    this.setState(
+      Object.assign(this.state.resetPwdModal, {
+        isVisible: flag,
+      })
+    );
+    this.setState(
+      Object.assign(this.state.resetPwdModal.data, {
+        id,
+      })
+    );
+  };
 
   // 重置密码
-  handleResetPwdSubmit = (fieldsValue) => {
+  handleResetPwdSubmit = fieldsValue => {
     const { dispatch } = this.props;
 
     dispatch({
@@ -105,15 +103,16 @@ export default class BasicForms extends PureComponent {
       },
     });
 
-    this.setState(Object.assign(this.state.resetPwdModal, {
-      isVisible: false,
-    }));
-
+    this.setState(
+      Object.assign(this.state.resetPwdModal, {
+        isVisible: false,
+      })
+    );
 
     dispatch(routerRedux.push('/sys/user/login'));
-  }
+  };
 
-  handleSubmit = (e) => {
+  handleSubmit = e => {
     e.preventDefault();
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
@@ -125,7 +124,10 @@ export default class BasicForms extends PureComponent {
     });
   };
   render() {
-    const { pageModel: { currentUser: data }, submitting } = this.props;
+    const {
+      pageModel: { currentUser: data },
+      submitting,
+    } = this.props;
     const { getFieldDecorator } = this.props.form;
     const { resetPwdModal } = this.state;
 
@@ -149,9 +151,7 @@ export default class BasicForms extends PureComponent {
     };
 
     return (
-      <PageHeaderLayout
-        title="修改个人资料"
-      >
+      <PageHeaderLayout title="修改个人资料">
         <Card bordered={false}>
           <Form onSubmit={this.handleSubmit} hideRequiredMark style={{ marginTop: 8 }}>
             <FormItem {...formItemLayout} label="账号">
@@ -203,7 +203,8 @@ export default class BasicForms extends PureComponent {
                 onClick={() => {
                   this.handleResetPwdVisible(true);
                 }}
-              >重置密码
+              >
+                重置密码
               </a>
             </FormItem>
             <FormItem {...submitFormLayout} style={{ marginTop: 32 }}>

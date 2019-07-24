@@ -11,41 +11,40 @@ import styles from './index.less';
 
 export default class GlobalHeader extends PureComponent {
   state = {
-    dataSource: this.getFlatMenus(this.props.menuData).map(item=>item.name),
-  }
-  get menus () {
+    dataSource: this.getFlatMenus(this.props.menuData).map(item => item.name),
+  };
+  get menus() {
     return this.props.menuData;
   }
-  get flatMenuKeys () {
-    return this.getFlatMenus(this.props.menuData).map(item=>item.name);
+  get flatMenuKeys() {
+    return this.getFlatMenus(this.props.menuData).map(item => item.name);
   }
-   /**
-   * 拍平菜单map，获取叶子菜单数组。 
+  /**
+   * 拍平菜单map，获取叶子菜单数组。
    * @param  menus
    */
-  getFlatMenus (menus) {
+  getFlatMenus(menus) {
     let keys = [];
-    menus.forEach((item) => {
+    menus.forEach(item => {
       if (item.children) {
         keys = keys.concat(this.getFlatMenus(item.children));
       }
-        
-      if(item.isLeafNode){
+
+      if (item.isLeafNode) {
         keys.push(item);
       }
     });
     return keys;
   }
-  getPathByName(name){  
-    let menu ;
-     this.getFlatMenus(this.props.menuData).some((item,index) => {
-      if (item.name===name) {
-        menu = item
-        return true
-      }  
-      else return false
-    })
-    return  menu.path
+  getPathByName(name) {
+    let menu;
+    this.getFlatMenus(this.props.menuData).some((item, index) => {
+      if (item.name === name) {
+        menu = item;
+        return true;
+      } else return false;
+    });
+    return menu.path;
   }
   componentWillUnmount() {
     this.triggerResizeEvent.cancel();
@@ -55,7 +54,7 @@ export default class GlobalHeader extends PureComponent {
     if (notices.length === 0) {
       return {};
     }
-    const newNotices = notices.map((notice) => {
+    const newNotices = notices.map(notice => {
       const newNotice = { ...notice };
       if (newNotice.datetime) {
         newNotice.datetime = moment(notice.datetime).fromNow();
@@ -65,13 +64,17 @@ export default class GlobalHeader extends PureComponent {
         newNotice.key = newNotice.id;
       }
       if (newNotice.extra && newNotice.status) {
-        const color = ({
+        const color = {
           todo: '',
           processing: 'blue',
           urgent: 'red',
           doing: 'gold',
-        })[newNotice.status];
-        newNotice.extra = <Tag color={color} style={{ marginRight: 0 }}>{newNotice.extra}</Tag>;
+        }[newNotice.status];
+        newNotice.extra = (
+          <Tag color={color} style={{ marginRight: 0 }}>
+            {newNotice.extra}
+          </Tag>
+        );
       }
       return newNotice;
     });
@@ -81,57 +84,58 @@ export default class GlobalHeader extends PureComponent {
     const { collapsed, onCollapse } = this.props;
     onCollapse(!collapsed);
     this.triggerResizeEvent();
-  }
+  };
   @Debounce(600)
-  triggerResizeEvent() { // eslint-disable-line
+  triggerResizeEvent() {
+    // eslint-disable-line
     const event = document.createEvent('HTMLEvents');
     event.initEvent('resize', true, false);
     window.dispatchEvent(event);
   }
 
-  handleSearch = (value) => {
+  handleSearch = value => {
     let dataSource = this.flatMenuKeys;
-    if(value!==""){ 
-        dataSource=this.flatMenuKeys.filter(item=>item.match(new RegExp(value, 'i')) !== null);
+    if (value !== '') {
+      dataSource = this.flatMenuKeys.filter(item => item.match(new RegExp(value, 'i')) !== null);
     }
-    
+
     this.setState({
       dataSource,
-    }); 
-  }
+    });
+  };
 
-  jumpPage(value){
-    router.push( this.getPathByName(value));
+  jumpPage(value) {
+    router.push(this.getPathByName(value));
     console.log('input', value); // eslint-disable-line
   }
 
   render() {
-    const {
-      currentUser, collapsed, isMobile, logo, onMenuClick,
-    } = this.props;
+    const { currentUser, collapsed, isMobile, logo, onMenuClick } = this.props;
     const { dataSource } = this.state;
     const menu = (
       <Menu className={styles.menu} selectedKeys={[]} onClick={onMenuClick}>
         {/* <Menu.Item disabled><Icon type="user" />个人中心</Menu.Item> */}
-        <Menu.Item key="setting"><Icon type="setting" />设置</Menu.Item>
+        <Menu.Item key="setting">
+          <Icon type="setting" />
+          设置
+        </Menu.Item>
         {/* <Menu.Item key="triggerError"><Icon type="close-circle" />触发报错</Menu.Item> */}
         <Menu.Divider />
-        <Menu.Item key="logout"><Icon type="logout" />退出登录</Menu.Item>
+        <Menu.Item key="logout">
+          <Icon type="logout" />
+          退出登录
+        </Menu.Item>
       </Menu>
     );
     // const noticeData = this.getNoticeData();
     return (
       <div className={styles.header}>
-        {isMobile && (
-          [
-            (
-              <Link to="/" className={styles.logo} key="logo">
-                <img src={logo} alt="logo" width="32" />
-              </Link>
-            ),
-            <Divider type="vertical" key="line" />,
-          ]
-        )}
+        {isMobile && [
+          <Link to="/" className={styles.logo} key="logo">
+            <img src={logo} alt="logo" width="32" />
+          </Link>,
+          <Divider type="vertical" key="line" />,
+        ]}
         <Icon
           className={styles.trigger}
           type={collapsed ? 'menu-unfold' : 'menu-fold'}
@@ -141,15 +145,15 @@ export default class GlobalHeader extends PureComponent {
           <HeaderSearch
             className={`${styles.action} ${styles.search}`}
             placeholder="站内搜索"
-            dataSource={dataSource} 
-            onSearch={(value) => {
-              this.handleSearch(value)
+            dataSource={dataSource}
+            onSearch={value => {
+              this.handleSearch(value);
             }}
-            onSelect={(value) => {
-              this.jumpPage(value)
+            onSelect={value => {
+              this.jumpPage(value);
             }}
-            onPressEnter={(value) => {
-              this.jumpPage(value)
+            onPressEnter={value => {
+              this.jumpPage(value);
             }}
           />
           {/* <Tooltip title="使用文档">
@@ -199,7 +203,9 @@ export default class GlobalHeader extends PureComponent {
                 <span className={styles.name}>{currentUser.name}</span>
               </span>
             </Dropdown>
-          ) : <Spin size="small" style={{ marginLeft: 8 }} />}
+          ) : (
+            <Spin size="small" style={{ marginLeft: 8 }} />
+          )}
         </div>
       </div>
     );

@@ -7,16 +7,19 @@ import GlobalFooter from 'ant-design-pro/lib/GlobalFooter';
 import styles from './userLayout.less';
 import { title, company, version, logo, siderMenuTitle } from './../utils/config';
 
-
-const copyright = <Fragment>Copyright <Icon type="copyright" /> {version} {company}</Fragment>;
+const copyright = (
+  <Fragment>
+    Copyright <Icon type="copyright" /> {version} {company}
+  </Fragment>
+);
 
 class UserLayout extends React.PureComponent {
-  getPageTitle () {
+  getPageTitle() {
     // const { location } = this.props;
     // const { pathname } = location;
     return title;
   }
-  render () {
+  render() {
     return (
       <DocumentTitle title={this.getPageTitle()}>
         <div className={styles.container}>
@@ -32,7 +35,7 @@ class UserLayout extends React.PureComponent {
             </div>
             {this.props.children}
           </div>
-          <GlobalFooter   copyright={copyright} />
+          <GlobalFooter copyright={copyright} />
         </div>
       </DocumentTitle>
     );
@@ -40,10 +43,10 @@ class UserLayout extends React.PureComponent {
 }
 
 // export default UserLayout;
-export default connect((obj) => {
-  // console.log(obj);
+export default connect(obj => {
+  //console.log(obj);
 
-  return ({
-    location: obj.routing.location,
-  })
+  return {
+    location: obj.router.location,
+  };
 })(UserLayout);

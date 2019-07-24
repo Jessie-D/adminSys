@@ -17,7 +17,12 @@ class Target extends Component {
   handleSelected = selectNode => {
     this.setState({ selectNode });
   };
-
+  deleteNode(e) {
+    console.log(e);
+  }
+  drawFlow() {
+    console.log('drawFlow', arguments);
+  }
   render() {
     const { isOver, canDrop, connectDropTarget, droppedItem, positions, flows, data } = this.props;
     const { selectNode } = this.state;
@@ -37,6 +42,8 @@ class Target extends Component {
                 isSelected={selectNode.decisionId === id}
                 handleSelected={this.handleSelected}
                 dropFlow={this.dropFlow}
+                deleteNode={this.deleteNode}
+                drawFlow={this.drawFlow}
               />
             );
           })}

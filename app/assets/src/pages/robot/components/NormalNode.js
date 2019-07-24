@@ -10,6 +10,7 @@ const NormalNode = ({
   id,
   connectDragSource,
   connectDropTarget,
+  drawFlow,
 }) => {
   let actinonTypes = {
     1: '挂机',
@@ -47,7 +48,7 @@ const NormalNode = ({
               ) : (
                 <div className="flow-node-branches-wrapper">
                   {childrenAnswerIds.map(item => (
-                    <JumpBtn item={item} id={id} key={item} />
+                    <JumpBtn item={item} id={id} key={item} drawFlow={drawFlow} />
                   ))}
                 </div>
               )}
@@ -78,16 +79,6 @@ const targetSource = {
     }
     props.dropFlow(props.data, item);
   },
-  // hover(props, monitor, component) {
-  //   if (!component) {
-  //     return;
-  //   }
-  //   const item = monitor.getItem();
-  //   let delta = monitor.getDifferenceFromInitialOffset();
-
-  //   console.log(props, item);
-  //   props.dropFlow(props.data, item);
-  // },
 };
 
 /**

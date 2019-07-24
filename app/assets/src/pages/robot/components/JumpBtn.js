@@ -16,6 +16,11 @@ export default DragSource(
       const { id, item } = props;
       return { id, left: 0, top: 0, type: 'flow', btnName: item };
     },
+    isDragging(props, monitor) {
+      const item = monitor.getItem();
+      console.log(monitor.getSourceClientOffset());
+      props.drawFlow(item);
+    },
   },
   (connect, monitor) => ({
     connectDragSource: connect.dragSource(),

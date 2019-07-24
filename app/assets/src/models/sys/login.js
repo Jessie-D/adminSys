@@ -9,9 +9,10 @@ export default {
   },
 
   effects: {
-    *login ({ payload }, { call, put }) {
+    *login({ payload }, { call, put }) {
       const response = yield call(login, payload);
-      const { redirect } = window.g_history.location.query;
+      const origin = window.location.origin;
+      const redirect = window.location.search.split('=')[1];
 
       if (response.code !== '0') {
         yield put({
@@ -29,21 +30,22 @@ export default {
         type: 'changeLoginStatus',
         payload: {
           type: 'account',
-          status:'0',
+          status: '0',
           currentAuthority: response.result.groupList.length ? response.result.groupList : 'guest',
         },
       });
-
-       window.location.href = redirect ? redirect : '/';
+      window.location.href = redirect ? `${origin}/#${decodeURIComponent(redirect)}` : '/';
     },
-    *logout (_, { put, select, call }) {
+    *logout(_, { put, select, call }) {
       yield call(logout);
-      window.location.href = `/?redirect=${encodeURIComponent(window.g_history.location.pathname)}#/sys/user/login`;
+      window.location.href = `/?redirect=${encodeURIComponent(
+        window.g_history.location.pathname
+      )}#/sys/user/login`;
     },
   },
 
   reducers: {
-    changeLoginStatus (state, { payload }) {
+    changeLoginStatus(state, { payload }) {
       return {
         ...state,
         status: payload.status,

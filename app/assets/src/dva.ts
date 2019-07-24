@@ -1,13 +1,13 @@
 import { message } from 'antd';
 // const dispatch=window.g_app._store.dispatch;
 
-// const 
+// const
 
 export function config() {
   return {
-    onError(err: { preventDefault: Function, message: Function }) {
+    onError(err: { preventDefault: Function; message: Function }) {
       err.preventDefault();
-     // message.error(err.message);
+      //message.error(err.message);//开发调试用
     },
     initialState: {
       // user: {

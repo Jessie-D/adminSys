@@ -65,7 +65,6 @@ class Container extends React.Component {
     let rootNode = {};
     let count = 0;
     for (let i = 0; i < decisionItemBOList.length; i++) {
-      console.log(i);
       let pNode = decisionItemBOList[i];
       pNode.id = pNode.decisionId || pNode.id;
       let hasChild = false;
@@ -171,9 +170,7 @@ class Container extends React.Component {
         for (let aName of item.answerIds) {
           let node = pos[item.decisionId || item.id];
           let pNode = pos[item.parentId];
-          if (pNode == undefined) {
-            console.log(item);
-          }
+
           let btn = this.getEle(`${item.parentId}-${aName}`);
           let x0 = pNode.left + btn.offsetLeft + btn.offsetWidth / 2;
           let y0 = pNode.top + btn.offsetTop + 23;
@@ -276,6 +273,7 @@ class Container extends React.Component {
     this.setCenter();
     this.autoLayOut(decisionTreeData.data);
   }
+
   render() {
     const { positions, flows, data } = this.state;
     return (
@@ -297,6 +295,7 @@ class Container extends React.Component {
                     data={data}
                     onDrop={this.onDrop}
                     dropFlow={this.dropFlow}
+                    deleteNode={this.deleteNode}
                     accept={['btn', 'node']}
                   />
                 </div>

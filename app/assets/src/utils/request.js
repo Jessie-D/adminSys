@@ -22,15 +22,16 @@ const codeMessage = {
   504: '网关超时。',
 };
 
-function checkStatus (response) {
+function checkStatus(response) {
   if (response.status >= 200 && response.status < 300) {
     return response;
   }
   const errortext = codeMessage[response.status] || response.statusText;
-  notification.error({
-    message: `请求错误 ${response.status}: ${response.url}`,
-    description: errortext,
-  });
+  // 开发调试用
+  // notification.error({
+  //   message: `请求错误 ${response.status}: ${response.url}`,
+  //   description: errortext,
+  // });
   const error = new Error(errortext);
   error.name = response.status;
   error.response = response;
@@ -44,7 +45,7 @@ function checkStatus (response) {
  * @param  {object} [options] The options we want to pass to "fetch"
  * @return {object}           An object containing either "data" or "err"
  */
-export default function request (url, options) {
+export default function request(url, options) {
   const defaultOptions = {
     credentials: 'include',
   };
@@ -70,28 +71,26 @@ export default function request (url, options) {
     }
   }
 
-
   return fetch(url, newOptions)
     .then(checkStatus)
-    .then((response) => {
+    .then(response => {
       // if (newOptions.method === 'DELETE' || response.status === 204) {
       //   return response.text();
       // }
       return response.json();
     })
-    .catch((e) => {
+    .catch(e => {
       const { dispatch } = window.g_app._store;
       const status = e.name;
 
       if (status === 401) {
-
         Modal.info({
           title: '提示',
           content: '登录状态已过期',
           okText: '重新登录',
-          onOk () {
+          onOk() {
             dispatch({
-              type: 'login/logout'
+              type: 'login/logout',
             });
           },
         });
@@ -107,9 +106,9 @@ export default function request (url, options) {
           okText: '更换账号',
           okType: 'danger',
           cancelText: '知道了',
-          onOk () {
+          onOk() {
             dispatch({
-              type: 'login/logout'
+              type: 'login/logout',
             });
           },
           // onCancel() {
@@ -120,12 +119,12 @@ export default function request (url, options) {
       }
       if (status <= 504 && status >= 500) {
         // dispatch(routerRedux.push('/exception/500'));
-        router.push('/exception/500')
+        router.push('/exception/500');
         // return;
       }
       if (status >= 404 && status < 422) {
         // dispatch(routerRedux.push('/exception/404'));
-        router.push('/exception/404')
+        router.push('/exception/404');
       }
     });
 }

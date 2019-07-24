@@ -2,7 +2,6 @@
 
 module.exports = action => {
   return async function(ctx, next) {
-
     const isLogin = ctx.isAuthenticated();
     const userInfo = ctx.user;
 
@@ -36,7 +35,6 @@ module.exports = action => {
       return false;
     }
 
-
     const roleList = await ctx.model.UserRole.findAll({
       where: {
         user_id: userInfo.id,
@@ -54,7 +52,6 @@ module.exports = action => {
     });
 
     for (let i = 0, l = roleList.length; i < l; i++) {
-
       if (module) {
         const result = await ctx.model.RoleModule.findOne({
           where: {
@@ -68,7 +65,6 @@ module.exports = action => {
           return true;
         }
       }
-
     }
     noAccess();
   };

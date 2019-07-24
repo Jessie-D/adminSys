@@ -2,7 +2,7 @@
 const path = require('path');
 
 module.exports = appInfo => {
-  const config = exports = {
+  const config = (exports = {
     security: {
       csrf: {
         enable: false,
@@ -18,19 +18,19 @@ module.exports = appInfo => {
       password: 'dwj123456',
       database: 'egg',
     },
-    // mysql: {
-    //   client: {
-    //     host: 'localhost',
-    //     // 端口号
-    //     port: '3306',
-    //     // 用户名
-    //     user: 'root',
-    //     // 密码
-    //     password: 'dwj123456',
-    //     // 数据库名
-    //     database: 'egg',
-    //   },
-    // },
+    mysql: {
+      client: {
+        host: 'localhost',
+        // 端口号
+        port: '3306',
+        // 用户名
+        user: 'root',
+        // 密码
+        password: 'dwj123456',
+        // 数据库名
+        database: 'egg',
+      },
+    },
     view: {
       defaultViewEngine: 'nunjucks',
       // root: path.join(appInfo.baseDir, 'app/assets'),
@@ -45,8 +45,28 @@ module.exports = appInfo => {
     // 是否加载到 app 上，默认开启
     app: true,
     // 是否加载到 agent 上，默认关闭
-    agent: false,
-  };
+    agent: true,
+    // eureka: {
+    //   client: {
+    //     instance: {
+    //       app: 'dwj-service',
+    //       ipAddr: '127.0.0.1',
+    //       vipAddress: 'deepexi.foo',
+    //       port: 7001,
+    //       leaseRenewalIntervalInSeconds: 1,
+    //       leaseExpirationDurationInSeconds: 2,
+    //     },
+    //     server: {
+    //       host: '10.10.1.57',
+    //       port: 8761,
+    //     },
+    //     // auth: {
+    //     //   user: 'admin',
+    //     //   password: 'deepexi',
+    //     // },
+    //   },
+    // },
+  });
 
   // 客户端资源配置
   config.assets = {
@@ -75,9 +95,7 @@ module.exports = appInfo => {
       path.join('/usr/local/logs', 'common-error.log'),
       path.join('/usr/local/logs', 'stderr.log'),
     ],
-    packages: [
-      path.join(appInfo.baseDir, 'package.json'),
-    ],
+    packages: [ path.join(appInfo.baseDir, 'package.json') ],
   };
 
   return config;

@@ -41,3 +41,8 @@ exports.assets = {
   enable: true,
   package: 'egg-view-assets',
 };
+
+exports.eureka = {
+  enable: false,
+  package: '@taccisum/egg-eureka',
+};

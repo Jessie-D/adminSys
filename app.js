@@ -9,7 +9,10 @@ module.exports = app => {
     // ctx.logger.debug('passport:serializeUser', user);
     return {
       username: user.username,
-      password: crypto.createHash('md5').update(user.password).digest('hex'),
+      password: crypto
+        .createHash('md5')
+        .update(user.password)
+        .digest('hex'),
     };
   });
 
